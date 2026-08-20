@@ -14,6 +14,9 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
+import com.snacklapaz.app.ui.auth.AuthViewModel
+import com.snacklapaz.app.ui.auth.LoginScreen
+import com.snacklapaz.app.ui.auth.SignUpScreen
 import com.snacklapaz.app.ui.cart.CartScreen
 import com.snacklapaz.app.ui.cart.CartViewModel
 import com.snacklapaz.app.ui.checkout.AddressScreen
@@ -43,6 +46,9 @@ fun SnackNavGraph() {
 
     // Uma única instância, compartilhada entre Home, Carrinho e Checkout.
     val cartViewModel: CartViewModel = viewModel()
+
+    // Uma única instância, compartilhada entre Perfil, Login e Cadastro.
+    val authViewModel: AuthViewModel = viewModel()
 
     Column(modifier = Modifier.fillMaxSize()) {
         Box(modifier = Modifier.weight(1f)) {
@@ -75,7 +81,40 @@ fun SnackNavGraph() {
                         onTrackOrderClick = { navController.navigate(Routes.ORDER_TRACKING) }
                     )
                 }
-                composable(Routes.PROFILE) { ProfileScreen() }
+                composable(Routes.PROFILE) {
+                    ProfileScreen(
+                        authViewModel = authViewModel,
+                        onLoginClick = { navController.navigate(Routes.LOGIN) },
+                        onSignUpClick = { navController.navigate(Routes.SIGNUP) }
+                    )
+                }
+
+                composable(Routes.LOGIN) {
+                    LoginScreen(
+                        authViewModel = authViewModel,
+                        onLoginSuccess = { navController.popBackStack() },
+                        onGoToSignUp = {
+                            navController.navigate(Routes.SIGNUP) {
+                                popUpTo(Routes.LOGIN) { inclusive = true }
+                            }
+                        }
+                    )
+                }
+
+                composable(Routes.SIGNUP) {
+                    SignUpScreen(
+                        authViewModel = authViewModel,
+                        onBackClick = { navController.popBackStack() },
+                        onSignUpSuccess = {
+                            navController.navigate(Routes.PROFILE) {
+                                popUpTo(navController.graph.findStartDestination().id) {
+                                    saveState = true
+                                }
+                                launchSingleTop = true
+                            }
+                        }
+                    )
+                }
 
                 composable(Routes.ADDRESS) {
                     AddressScreen(

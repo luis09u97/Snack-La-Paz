@@ -15,6 +15,8 @@ object Routes {
     const val ORDER_CONFIRMATION = "order_confirmation/{orderNumber}/{total}"
     const val RECEIPT = "receipt"
     const val ORDER_TRACKING = "order_tracking"
+    const val LOGIN = "login"
+    const val SIGNUP = "signup"
 
     fun orderConfirmationRoute(orderNumber: String, total: String) =
         "order_confirmation/$orderNumber/$total"
