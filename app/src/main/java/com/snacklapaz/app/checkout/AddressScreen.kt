@@ -32,6 +32,7 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.snacklapaz.app.ui.cart.CartViewModel
+import com.snacklapaz.app.ui.cart.model.DeliveryAddress
 import com.snacklapaz.app.ui.components.SnackPrimaryButton
 import com.snacklapaz.app.ui.components.SnackTextField
 import com.snacklapaz.app.ui.components.SnackTopBar
@@ -135,9 +136,16 @@ fun AddressScreen(
                     text = "Finalizar pedido",
                     enabled = isFormValid,
                     onClick = {
-                        val orderNumber = (1000..9999).random().toString()
+                        val address = DeliveryAddress(
+                            fullName = fullName,
+                            phone = phone,
+                            street = street,
+                            number = number,
+                            neighborhood = neighborhood,
+                            complement = complement
+                        )
                         val total = cartViewModel.total
-                        cartViewModel.clearCart()
+                        val orderNumber = cartViewModel.placeOrder(address)
                         onOrderConfirmed(orderNumber, total)
                     }
                 )

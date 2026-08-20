@@ -20,7 +20,9 @@ import com.snacklapaz.app.ui.checkout.AddressScreen
 import com.snacklapaz.app.ui.checkout.OrderConfirmationScreen
 import com.snacklapaz.app.ui.home.HomeScreen
 import com.snacklapaz.app.ui.orders.OrdersScreen
+import com.snacklapaz.app.ui.orders.OrderTrackingScreen
 import com.snacklapaz.app.ui.profile.ProfileScreen
+import com.snacklapaz.app.ui.receipt.ReceiptScreen
 import com.snacklapaz.app.ui.search.SearchScreen
 
 // Rotas que fazem parte das 5 abas principais (mostram a bottom bar).
@@ -67,7 +69,12 @@ fun SnackNavGraph() {
                         }
                     )
                 }
-                composable(Routes.ORDERS) { OrdersScreen() }
+                composable(Routes.ORDERS) {
+                    OrdersScreen(
+                        cartViewModel = cartViewModel,
+                        onTrackOrderClick = { navController.navigate(Routes.ORDER_TRACKING) }
+                    )
+                }
                 composable(Routes.PROFILE) { ProfileScreen() }
 
                 composable(Routes.ADDRESS) {
@@ -99,15 +106,29 @@ fun SnackNavGraph() {
                     OrderConfirmationScreen(
                         orderNumber = orderNumber,
                         total = total,
-                        onViewReceiptClick = { /* Etapa 8 (Recibo) vai implementar */ },
+                        onViewReceiptClick = { navController.navigate(Routes.RECEIPT) },
                         onTrackOrderClick = {
-                            navController.navigate(Routes.ORDERS) {
+                            navController.navigate(Routes.ORDER_TRACKING) {
                                 popUpTo(navController.graph.findStartDestination().id) {
                                     saveState = true
                                 }
                                 launchSingleTop = true
                             }
                         }
+                    )
+                }
+
+                composable(Routes.RECEIPT) {
+                    ReceiptScreen(
+                        order = cartViewModel.lastOrder,
+                        onBackClick = { navController.popBackStack() }
+                    )
+                }
+
+                composable(Routes.ORDER_TRACKING) {
+                    OrderTrackingScreen(
+                        order = cartViewModel.lastOrder,
+                        onBackClick = { navController.popBackStack() }
                     )
                 }
             }

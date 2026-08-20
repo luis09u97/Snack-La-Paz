@@ -5,6 +5,8 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import com.snacklapaz.app.ui.cart.model.CartItem
+import com.snacklapaz.app.ui.cart.model.DeliveryAddress
+import com.snacklapaz.app.ui.cart.model.OrderSummary
 import com.snacklapaz.app.ui.home.model.Product
 
 /**
@@ -73,5 +75,29 @@ class CartViewModel : ViewModel() {
 
     fun clearCart() {
         items = emptyList()
+    }
+
+    var lastOrder by mutableStateOf<OrderSummary?>(null)
+        private set
+
+    /**
+     * Confirma o pedido: guarda um retrato completo (itens, valores,
+     * endereço) em [lastOrder] e só então limpa o carrinho. Retorna o
+     * número do pedido gerado, pra navegação.
+     */
+    fun placeOrder(address: DeliveryAddress): String {
+        val orderNumber = (1000..9999).random().toString()
+        lastOrder = OrderSummary(
+            orderNumber = orderNumber,
+            items = items,
+            subtotal = subtotal,
+            deliveryFee = deliveryFee,
+            discount = discount,
+            total = total,
+            address = address,
+            dateTimeMillis = System.currentTimeMillis()
+        )
+        clearCart()
+        return orderNumber
     }
 }
